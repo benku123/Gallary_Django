@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+  <a class="navbar-brand" href="{% url 'index' %}">Gallery</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      {% if user.is_authenticated %}
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'logout' %}">logout</a>
+            </li>
+        </ul>
+      {% else %}
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'register' %}">Register</a>
+            </li>
+        </ul>
+      {% endif %}
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+  </div>
+
+</nav>
+
+<div class="container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% block content %} {% endblock %}
+
+    {% if is_paginated %}
+
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+              <li class="page-item {% if not prev_url %} disabled {% endif %}">
+                  <a class="page-link" href="{{ prev_url }}" tabindex="-1">Previous</a>
+              </li>
+
+              {% for n in page_object.paginator.page_range %}
+
+                  {% if page_object.number == n %}
+                        <li class="page-item active">
+                            <a class="page-link" href="?page={{ n }}">{{ n }}
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                  {% elif n > page_object.number|add:-3 and n < page_object.number|add:3 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                        </li>
+                  {% endif %}
+
+              {% endfor %}
+              <li class="page-item {% if not next_url %} disabled {% endif %}">
+                 <a class="page-link" href="{{ next_url }}">Next</a>
+              </li>
+          </ul>
+        </nav>
+{% endif %}
+</div>
+
+</body>
+</html>
